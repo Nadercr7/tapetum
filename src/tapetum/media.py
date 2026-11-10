@@ -1,9 +1,10 @@
 """Fetch the smallest media that does the job. Never the full-quality file."""
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
-from .common import Source, TapetumError, ffmpeg_exe, log
+from .common import Source, TapetumError, ffmpeg_exe, log, run_ffmpeg
 
 
 def _opts(out: Path, fmt: str, extra: dict | None = None) -> dict:
@@ -77,6 +78,71 @@ def get_video(src: Source, workdir: Path, height: int = 360) -> Path:
     return _download(src, workdir / "video.%(ext)s", fmt)
 
 
+def hls_segments(playlist: str, start: float, end: float) -> tuple[str | None, list[str], float]:
+    """From an HLS media playlist, pick the init segment and the media segments that cover [start, end].
+
+    Returns (init URI or None, segment URIs, start time of the first picked segment)."""
+    init, picked, first, pos, dur = None, [], 0.0, 0.0, None
+    for line in playlist.splitlines():
+        line = line.strip()
+        if line.startswith("#EXT-X-MAP:"):
+            m = re.search(r'URI="([^"]+)"', line)
+            init = m.group(1) if m else None
+        elif line.startswith("#EXTINF:"):
+            dur = float(line[8:].split(",")[0])
+        elif line and not line.startswith("#") and dur is not None:
+            if pos + dur > start and pos < end:
+                if not picked:
+                    first = pos
+                picked.append(line)
+            pos += dur
+            dur = None
+    return init, picked, first
+
+
+def _hls_clip(src: Source, workdir: Path, start: float, end: float, height: int) -> Path | None:
+    """Fetch only the few HLS segments around the moment, then trim locally.
+
+    YouTube throttles ffmpeg's single HTTP stream: an 8 s section took about 8 minutes that way, while
+    the same moment's HLS segments arrive in about 2 seconds. Returns None when there's no HLS to use."""
+    import urllib.request
+    from urllib.parse import urljoin
+
+    import yt_dlp
+
+    try:
+        with yt_dlp.YoutubeDL(_opts(workdir / "probe", "bv*/b")) as ydl:
+            info = ydl.extract_info(src.url, download=False)
+        fmts = [f for f in info.get("formats") or [] if f.get("protocol") == "m3u8_native"
+                and f.get("vcodec") not in (None, "none") and (f.get("height") or 0) <= height]
+        if not fmts:
+            return None
+        f = max(fmts, key=lambda x: (x.get("height") or 0, x.get("tbr") or 0))
+        headers = f.get("http_headers") or {}
+
+        def fetch(url: str) -> bytes:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=60) as r:
+                return r.read()
+
+        playlist = fetch(f["url"]).decode("utf-8", "replace")
+        init, segs, first = hls_segments(playlist, start, end)
+        if not segs:
+            return None
+        sec = workdir / "section.mp4"
+        with open(sec, "wb") as out:
+            for uri in ([init] if init else []) + segs:
+                out.write(fetch(urljoin(f["url"], uri)))
+        clip = workdir / "clip.mp4"
+        # Trim with a filter, not an input -ss: seeking inside fragmented H.264 landed about 2.5 s late.
+        trim = f"trim=start={max(0.0, start - first):.3f}:duration={end - start:.3f},setpts=PTS-STARTPTS"
+        run_ffmpeg(["-i", str(sec), "-vf", trim, "-an", "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", str(clip)])
+        return clip if clip.exists() and clip.stat().st_size > 0 else None
+    except Exception as e:  # any surprise: fall back to the slow but general path
+        log(f"segment fetch failed ({str(e).splitlines()[-1][:80] if str(e) else type(e).__name__}); using the slow path")
+        return None
+
+
 def get_clip(src: Source, workdir: Path, start: float, end: float, height: int = 720) -> Path:
     """Download only a section, at higher quality, for `--at` zoom."""
     if src.kind == "local":
@@ -84,6 +150,9 @@ def get_clip(src: Source, workdir: Path, start: float, end: float, height: int =
     from yt_dlp.utils import download_range_func
 
     log(f"downloading {end - start:.0f}s clip at up to {height}p")
+    clip = _hls_clip(src, workdir, start, end, height)
+    if clip is not None:
+        return clip
     fmt = f"bestvideo[height<={height}]/best[height<={height}]/best"
     return _download(
         src, workdir / "clip.%(ext)s", fmt,

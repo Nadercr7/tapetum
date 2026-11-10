@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.2.2 (2026-11-10)
+- `--at` zoom on YouTube takes seconds instead of minutes. It used to ask ffmpeg for the section over one HTTP stream, which YouTube throttles (an 8-second clip took about 8 minutes). It now fetches only the few HLS segments around the moment and trims them locally, and falls back to the old path when a site has no HLS.
+
 ## 0.2.1 (2026-11-10)
 - Install straight from PyPI: `uvx tapetum "<url>"`.
 - The MCP server runs with `uvx --from "tapetum[mcp]" tapetum mcp`.

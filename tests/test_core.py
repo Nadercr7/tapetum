@@ -186,3 +186,14 @@ def test_budget_below_six_is_respected(tmp_path: Path):
 
 def test_unknown_original_language_prefers_english_human_track():
     assert choose_track(["de", "en", "es"], [], ["fr"], None) == ("en", "manual")
+
+
+def test_hls_segments_cover_only_the_window():
+    from tapetum.media import hls_segments
+
+    pl = "\n".join(["#EXTM3U", '#EXT-X-MAP:URI="init.mp4"'] + [f"#EXTINF:5.0,\nseg{i}.m4s" for i in range(10)])
+    init, segs, first = hls_segments(pl, 12.0, 20.0)
+    assert init == "init.mp4"
+    assert segs == ["seg2.m4s", "seg3.m4s"]
+    assert first == 10.0
+    assert hls_segments(pl, 60.0, 70.0)[1] == []

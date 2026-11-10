@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "tapetum"
-version = "0.2.1"
+version = "0.2.2"
 description = "Give your agent eyes. Paste a video link, get one timeline of what was said and what was on screen. No cookies, no API keys."
 readme = "README.md"
 requires-python = ">=3.10"
