@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>tapetum viewer</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%230B0D12'/%3E%3Cpath d='M8 32C15 20.5 23 15 32 15s17 5.5 24 17c-7 11.5-15 17-24 17S15 43.5 8 32z' fill='%23E8A317'/%3E%3Cpath d='M32 18.5c3.4 4 5 8.5 5 13.5s-1.6 9.5-5 13.5c-3.4-4-5-8.5-5-13.5s1.6-9.5 5-13.5z' fill='%230B0D12'/%3E%3Ccircle cx='24.5' cy='26' r='2.6' fill='%23FFF6DD'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@100..130,700..900&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F4F7; --surface:#FFFFFF; --ink:#0B0D12; --muted:#565E6F; --line:#DADFE7; --line-strong:#C3C9D4;
+  --shine:#E8A317; --shine-ink:#8A5A00; --shine-soft:#E8A31724; --mark:#F5B83D55;
+  --display:"Anybody",ui-sans-serif,system-ui,sans-serif;
+  --body:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"Geist Mono",ui-monospace,"Cascadia Code",Consolas,monospace;
+}
+:root[data-theme="dark"]{--bg:#0A0B0F; --surface:#12141B; --ink:#ECEEF3; --muted:#9AA1B2; --line:#232733; --line-strong:#323848; --shine:#F5B83D; --shine-ink:#F5B83D; --shine-soft:#F5B83D1C; --mark:#F5B83D44;}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0A0B0F; --surface:#12141B; --ink:#ECEEF3; --muted:#9AA1B2; --line:#232733; --line-strong:#323848; --shine:#F5B83D; --shine-ink:#F5B83D; --shine-soft:#F5B83D1C; --mark:#F5B83D44;}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--body);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--shine);outline-offset:2px;border-radius:6px}
+header{display:flex;align-items:center;gap:14px;padding:12px 18px;border-bottom:1px solid var(--line);background:var(--surface);flex-wrap:wrap}
+.mark{width:26px;height:26px;flex:none}
+.titles{min-width:0;flex:1}
+h1{font:800 18px/1.2 var(--display);font-stretch:108%;letter-spacing:-.01em;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;unicode-bidi:plaintext}
+.meta{font:12.5px var(--mono);color:var(--muted);display:flex;gap:10px;flex-wrap:wrap;margin-top:2px}
+.meta a{color:var(--ink)}
+.pill{font:11.5px var(--mono);padding:3px 9px;border:1px solid var(--line);border-radius:99px;color:var(--muted);white-space:nowrap}
+.pill.warn{color:var(--shine-ink);border-color:var(--shine);background:var(--shine-soft);max-width:340px;overflow:hidden;text-overflow:ellipsis}
+.icon-btn{display:grid;place-items:center;width:36px;height:36px;border-radius:9px;border:1px solid var(--line);background:var(--bg);cursor:pointer}
+.icon-btn svg{width:17px;height:17px}
+main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(300px,1fr)}
+@media (max-width:860px){main{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}}
+.stage{padding:18px;display:flex;flex-direction:column;gap:14px;min-height:0;min-width:0;border-right:1px solid var(--line)}
+.shot{position:relative;background:#000;border-radius:12px;overflow:hidden;aspect-ratio:16/9;width:100%;max-width:calc(56vh * 16 / 9);margin:0 auto}
+.shot img{width:100%;height:100%;object-fit:contain;display:block}
+.shot .ts{position:absolute;left:12px;top:12px;background:#000c;color:#FFE3A3;font:500 13px var(--mono);padding:3px 9px;border-radius:6px}
+.shot .nav{position:absolute;top:50%;translate:0 -50%;width:40px;height:40px;border-radius:50%;border:0;background:#000a;color:#fff;cursor:pointer;display:grid;place-items:center;opacity:.0;transition:opacity .2s}
+.shot:hover .nav,.shot .nav:focus-visible{opacity:1}
+.shot .prev{left:10px}.shot .next{right:10px}
+.shot .nav svg{width:18px;height:18px}
+.strip{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px;scrollbar-width:thin}
+.strip button{flex:0 0 auto;width:118px;border:0;border-radius:7px;padding:0;background:none;cursor:pointer;position:relative;opacity:.6;transition:opacity .15s,box-shadow .15s}
+.strip button img{width:100%;display:block;border-radius:7px;aspect-ratio:16/9;object-fit:cover}
+.strip button span{position:absolute;left:5px;bottom:5px;background:#000b;color:#FFE3A3;font:11px var(--mono);padding:1px 6px;border-radius:4px}
+.strip button:hover{opacity:1}
+.strip button[aria-current="true"]{opacity:1;box-shadow:0 0 0 2px var(--shine),0 6px 16px -6px #E8A31799}
+.hint{font:12px var(--mono);color:var(--muted);margin:0}
+.hint kbd{font:inherit;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 5px;background:var(--surface)}
+.side{display:flex;flex-direction:column;min-height:0;min-width:0;background:var(--surface)}
+.search{padding:12px 14px;border-bottom:1px solid var(--line);position:relative}
+.search svg{position:absolute;left:26px;top:50%;translate:0 -50%;width:16px;height:16px;color:var(--muted)}
+.search input{width:100%;padding:10px 12px 10px 36px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);font:14px var(--body)}
+.count{font:12px var(--mono);color:var(--muted);padding:8px 16px 0}
+.lines{overflow-y:auto;padding:6px 8px 40px;flex:1}
+.line{display:grid;grid-template-columns:58px 1fr;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer}
+.line:hover{background:var(--shine-soft)}
+.line.on{background:var(--shine-soft);box-shadow:inset 3px 0 0 var(--shine)}
+.line time{font:12px/1.95 var(--mono);color:var(--shine-ink)}
+.line p{margin:0;unicode-bidi:plaintext;text-align:start}
+.line mark{background:var(--mark);color:inherit;border-radius:3px;padding:0 1px}
+.empty{padding:32px 16px;color:var(--muted);text-align:center}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header>
+  <svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="15" fill="#0B0D12"/><path d="M8 32C15 20.5 23 15 32 15s17 5.5 24 17c-7 11.5-15 17-24 17S15 43.5 8 32z" fill="#E8A317"/><path d="M32 18.5c3.4 4 5 8.5 5 13.5s-1.6 9.5-5 13.5c-3.4-4-5-8.5-5-13.5s1.6-9.5 5-13.5z" fill="#0B0D12"/><circle cx="24.5" cy="26" r="2.6" fill="#FFF6DD"/></svg>
+  <div class="titles">
+    <h1 id="title"></h1>
+    <div class="meta" id="meta"></div>
+  </div>
+  <span id="tags" style="display:flex;gap:6px;flex-wrap:wrap"></span>
+  <button class="icon-btn" id="theme" type="button" aria-label="Switch between light and dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></button>
+</header>
+<main>
+  <section class="stage" aria-label="Frames">
+    <div class="shot">
+      <img id="big" alt="">
+      <span class="ts" id="bigts"></span>
+      <button class="nav prev" id="prev" type="button" aria-label="Previous frame"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <button class="nav next" id="next" type="button" aria-label="Next frame"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+    <div class="strip" id="strip" aria-label="Kept frames"></div>
+    <p class="hint"><kbd>←</kbd> <kbd>→</kbd> step through frames · <kbd>/</kbd> search · click a line to jump to its frame</p>
+  </section>
+  <section class="side" aria-label="Transcript">
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <label class="sr" for="q">Search the transcript</label>
+      <input id="q" type="search" placeholder="Search the transcript" autocomplete="off">
+    </div>
+    <div class="count" id="count" aria-live="polite"></div>
+    <div class="lines" id="lines"></div>
+  </section>
+</main>
+<script>
+const D = {"title": "Me at the zoo", "uploader": "jawed", "duration": 19, "url": "https://www.youtube.com/watch?v=jNQXAC9IVRw", "source": "youtube", "transcript": {"source": "youtube-transcript-api", "lang": "en", "kind": "manual", "track": "en", "segments": 6}, "warnings": [], "segments": [{"start": 1.2, "end": 3.3600000000000003, "text": "All right, so here we are, in front of the elephants"}, {"start": 5.318, "end": 7.974, "text": "the cool thing about these guys is that they have really..."}, {"start": 7.974, "end": 12.616, "text": "really really long trunks"}, {"start": 12.616, "end": 14.366999999999999, "text": "and that's cool"}, {"start": 14.421, "end": 15.732999999999999, "text": "(baaaaaaaaaaahhh!!)"}, {"start": 16.881, "end": 18.881, "text": "and that's pretty much all there is to say"}], "frames": [{"file": "frames/f000_00-00.jpg", "t": 0.0, "ts": "00:00"}, {"file": "frames/f001_00-05.jpg", "t": 5.0, "ts": "00:05"}, {"file": "frames/f002_00-10.jpg", "t": 10.0, "ts": "00:10"}, {"file": "frames/f003_00-15.jpg", "t": 15.0, "ts": "00:15"}, {"file": "frames/f004_00-18.jpg", "t": 18.0, "ts": "00:18"}]};
+const $ = id => document.getElementById(id);
+const fmt = s => { s = Math.max(0, Math.floor(s)); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60;
+  return (h ? h + ":" + String(m).padStart(2, "0") : String(m).padStart(2, "0")) + ":" + String(x).padStart(2, "0"); };
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const at = t => D.url && /youtube\.com|youtu\.be/.test(D.url) ? D.url + (D.url.includes("?") ? "&" : "?") + "t=" + Math.floor(t) + "s" : null;
+
+// theme
+const root = document.documentElement;
+try { const t = localStorage.getItem("tapetum-theme"); if (t) root.dataset.theme = t; } catch (_) {}
+$("theme").onclick = () => {
+  const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  root.dataset.theme = dark ? "light" : "dark";
+  try { localStorage.setItem("tapetum-theme", root.dataset.theme); } catch (_) {}
+};
+
+document.title = (D.title || "Untitled video") + " · tapetum";
+$("title").textContent = D.title || "Untitled video";
+const meta = [];
+if (D.uploader) meta.push(esc(D.uploader));
+if (D.duration) meta.push(fmt(D.duration));
+if (D.url && /^https?:/.test(D.url)) meta.push(`<a href="${esc(D.url)}" target="_blank" rel="noopener">open source video</a>`);
+$("meta").innerHTML = meta.join(" · ");
+const tags = [];
+if (D.transcript) tags.push(`<span class="pill">${esc(D.transcript.kind)} · ${esc(D.transcript.lang || "?")}</span>`);
+(D.warnings || []).forEach(w => tags.push(`<span class="pill warn" title="${esc(w)}">${esc(w)}</span>`));
+$("tags").innerHTML = tags.join("");
+
+// frames
+let cur = 0;
+const strip = $("strip");
+D.frames.forEach((f, i) => {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.setAttribute("aria-label", "Frame at " + f.ts);
+  b.innerHTML = `<img src="${esc(f.file)}" alt="" loading="lazy"><span>${esc(f.ts)}</span>`;
+  b.onclick = () => pick(i, true);
+  strip.appendChild(b);
+});
+function pick(i, syncText) {
+  if (!D.frames.length) return;
+  cur = Math.max(0, Math.min(i, D.frames.length - 1));
+  const f = D.frames[cur];
+  $("big").src = f.file; $("big").alt = "Frame at " + f.ts; $("bigts").textContent = f.ts;
+  [...strip.children].forEach((b, j) => b.setAttribute("aria-current", j === cur ? "true" : "false"));
+  strip.children[cur].scrollIntoView({inline: "center", block: "nearest", behavior: "smooth"});
+  if (syncText) {
+    const next = D.frames[cur + 1] ? D.frames[cur + 1].t : Infinity;
+    const idx = D.segments.findIndex(s => s.start >= f.t - 0.5 && s.start < next);
+    highlight(idx, true);
+  }
+}
+$("prev").onclick = () => pick(cur - 1, true);
+$("next").onclick = () => pick(cur + 1, true);
+
+// transcript
+const lines = $("lines");
+function marked(text, q) {
+  if (!q) return esc(text);
+  const lower = text.toLowerCase(); let out = "", i = 0, j;
+  while ((j = lower.indexOf(q, i)) !== -1) { out += esc(text.slice(i, j)) + "<mark>" + esc(text.slice(j, j + q.length)) + "</mark>"; i = j + q.length; }
+  return out + esc(text.slice(i));
+}
+function render(filter) {
+  const q = (filter || "").trim().toLowerCase();
+  lines.innerHTML = "";
+  let n = 0;
+  const frag = document.createDocumentFragment();
+  D.segments.forEach((s, i) => {
+    if (q && !s.text.toLowerCase().includes(q)) return;
+    n++;
+    const el = document.createElement("div");
+    el.className = "line"; el.dataset.i = i; el.tabIndex = 0; el.setAttribute("role", "button");
+    const link = at(s.start);
+    el.innerHTML = `<time>${link ? `<a href="${esc(link)}" target="_blank" rel="noopener" tabindex="-1" style="color:inherit">${fmt(s.start)}</a>` : fmt(s.start)}</time><p>${marked(s.text, q)}</p>`;
+    el.onclick = e => { if (e.target.tagName !== "A") seek(s.start, i); };
+    el.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); seek(s.start, i); } };
+    frag.appendChild(el);
+  });
+  lines.appendChild(frag);
+  $("count").textContent = q ? `${n} of ${D.segments.length} lines` : (D.segments.length ? `${D.segments.length} lines` : "");
+  if (!n) lines.innerHTML = `<div class="empty">${D.segments.length ? "No line matches that search." : "This video has no transcript. The warnings at the top say why."}</div>`;
+}
+function highlight(i, scroll) {
+  lines.querySelectorAll(".line.on").forEach(e => e.classList.remove("on"));
+  const el = lines.querySelector(`[data-i="${i}"]`);
+  if (el) { el.classList.add("on"); if (scroll) el.scrollIntoView({block: "center", behavior: "smooth"}); }
+}
+function frameAt(t) { let k = 0; D.frames.forEach((f, i) => { if (f.t <= t + 0.01) k = i; }); return k; }
+function seek(t, i) { if (D.frames.length) pick(frameAt(t), false); highlight(i, false); }
+
+let timer;
+$("q").oninput = e => { clearTimeout(timer); timer = setTimeout(() => render(e.target.value), 80); };
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT") { if (e.key === "Escape") { e.target.value = ""; render(""); e.target.blur(); } return; }
+  if (e.key === "ArrowRight") { e.preventDefault(); pick(cur + 1, true); }
+  if (e.key === "ArrowLeft") { e.preventDefault(); pick(cur - 1, true); }
+  if (e.key === "/") { e.preventDefault(); $("q").focus(); }
+});
+render("");
+if (D.frames.length) pick(0, false);
+else { document.querySelector(".stage").remove(); document.querySelector("main").style.gridTemplateColumns = "1fr"; }
+</script>
+</body>
+</html>

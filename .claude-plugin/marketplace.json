@@ -1,0 +1,11 @@
+{
+  "name": "tapetum",
+  "owner": { "name": "Nadercr7" },
+  "plugins": [
+    {
+      "name": "tapetum",
+      "source": "./",
+      "description": "Give your agent eyes. Watch any public video from a link."
+    }
+  ]
+}

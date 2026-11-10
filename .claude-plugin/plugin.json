@@ -1,0 +1,9 @@
+{
+  "name": "tapetum",
+  "version": "0.2.1",
+  "description": "Give your agent eyes. Watch any public video from a link: transcript, smart frames and one timeline. No cookies, no keys.",
+  "author": { "name": "Nadercr7" },
+  "homepage": "https://github.com/Nadercr7/tapetum",
+  "license": "MIT",
+  "keywords": ["video", "transcript", "youtube", "whisper"]
+}

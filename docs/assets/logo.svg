@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="tapetum">
+  <rect width="64" height="64" rx="15" fill="#0B0D12"/>
+  <path d="M8 32C15 20.500 23 15 32 15s17 5.500 24 17c-7 11.500-15 17-24 17S15 43.500 8 32z" fill="#E8A317"/>
+  <path d="M32 18.500c3.400 4 5 8.500 5 13.500s-1.600 9.500-5 13.500c-3.400-4-5-8.500-5-13.500s1.600-9.500 5-13.500z" fill="#0B0D12"/>
+  <circle cx="24.500" cy="26" r="2.600" fill="#FFF6DD"/>
+</svg>

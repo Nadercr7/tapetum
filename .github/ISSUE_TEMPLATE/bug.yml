@@ -1,0 +1,23 @@
+name: Something went wrong
+description: A video didn't work, or the output looks off
+body:
+  - type: input
+    id: url
+    attributes:
+      label: Video link
+      description: A public link we can try. Leave it out if the video is private.
+  - type: textarea
+    id: command
+    attributes:
+      label: What you ran and what you got
+      description: The command, and the JSON it printed (the `error` and `steps` parts matter most).
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: doctor
+    attributes:
+      label: Output of `tapetum doctor`
+      render: shell
+    validations:
+      required: true
