@@ -8,7 +8,14 @@
 <meta property="og:title" content="tapetum: give your agent eyes">
 <meta property="og:description" content="Paste a video link. Get one timeline of what was said and what was on screen. No cookies, no API keys.">
 <meta property="og:image" content="https://nadercr7.github.io/tapetum/social.png">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://nadercr7.github.io/tapetum/">
+<meta property="og:site_name" content="tapetum">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="tapetum: give your agent eyes">
+<meta name="twitter:description" content="Paste a video link. Get one timeline of what was said and what was on screen. No cookies, no API keys.">
+<meta name="twitter:image" content="https://nadercr7.github.io/tapetum/social.png">
+<link rel="canonical" href="https://nadercr7.github.io/tapetum/">
 <meta name="theme-color" content="#0B0D12">
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -57,6 +64,9 @@ code{font-family:var(--mono);font-size:.92em}
 .nav nav a.gh{display:flex;align-items:center;gap:8px;color:var(--ink);font:500 14px var(--body);border:1px solid var(--line);background:var(--surface);padding:9px 14px;border-radius:10px;margin-left:6px}
 .nav nav a.gh:hover{border-color:var(--line-strong);background:var(--surface)}
 .gh svg{width:17px;height:17px}
+.stars{display:inline-flex;align-items:center;gap:4px;margin-left:4px;padding-left:9px;border-left:1px solid var(--line);font:500 13px var(--mono);color:var(--muted)}
+.stars[hidden]{display:none}
+.stars::before{content:"";width:12px;height:12px;background:var(--shine);clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
 @media (max-width:720px){.nav nav a.hide-sm{display:none}}
 
 .hero{padding:72px 0 36px;text-align:center}
@@ -163,6 +173,20 @@ details p{margin:-6px 0 22px;color:var(--muted);max-width:46em}
 .name p{color:#B5BBC9;margin:0;max-width:40em;font-size:17px}
 @media (max-width:700px){.name{grid-template-columns:1fr;padding:32px;gap:20px}.name img{width:84px;height:84px}}
 
+.cta{margin-top:24px;padding:48px 56px;border-radius:24px;border:1px solid var(--line);background:var(--surface);display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center}
+.cta h2{margin:0 0 10px;font-size:clamp(28px,3.6vw,42px);max-width:none}
+.cta p{margin:0;color:var(--muted);max-width:34em}
+.cta-actions{display:flex;flex-direction:column;gap:12px;align-items:stretch;min-width:260px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 20px;border-radius:12px;font:600 15.5px var(--body);text-decoration:none;cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s}
+.btn svg{width:18px;height:18px}
+.btn-star{background:var(--shine);color:#0B0D12;box-shadow:0 10px 28px -12px #E8A317aa}
+.btn-star:hover{transform:translateY(-1px);box-shadow:0 14px 32px -12px #E8A317cc}
+.share{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.share a{display:grid;place-items:center;width:44px;height:44px;border-radius:11px;border:1px solid var(--line);color:var(--muted);background:var(--bg)}
+.share a:hover{color:var(--ink);border-color:var(--line-strong)}
+.share a svg{width:18px;height:18px}
+.share-label{font:12.5px var(--mono);color:var(--muted);text-align:center;margin-top:4px}
+@media (max-width:760px){.cta{grid-template-columns:1fr;padding:32px}.cta-actions{min-width:0}}
 footer{margin-top:88px;padding:28px 0 48px;border-top:1px solid var(--line);color:var(--muted);font-size:14px}
 footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px}
 footer a{color:var(--ink);text-decoration:none}
@@ -183,7 +207,7 @@ footer a:hover{text-decoration:underline}
       <button class="icon-btn" id="theme" type="button" aria-label="Switch between light and dark">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.500A8 8 0 1 1 9.500 4a6.500 6.500 0 0 0 10.500 10.500z"/></svg>
       </button>
-      <a class="gh" href="https://github.com/Nadercr7/tapetum"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.650.5.5 5.650.5 12a11.500 11.500 0 0 0 7.860 10.910c.580.110.790-.250.790-.560v-2c-3.200.700-3.880-1.380-3.880-1.380-.520-1.330-1.280-1.690-1.280-1.690-1.050-.720.080-.700.080-.700 1.160.080 1.770 1.190 1.770 1.190 1.030 1.770 2.700 1.260 3.360.960.100-.750.400-1.260.730-1.550-2.560-.290-5.250-1.280-5.250-5.690 0-1.260.450-2.290 1.190-3.090-.120-.290-.520-1.460.110-3.050 0 0 .970-.310 3.170 1.180a11 11 0 0 1 5.770 0c2.200-1.490 3.170-1.180 3.170-1.180.630 1.590.230 2.760.110 3.050.740.800 1.190 1.830 1.190 3.090 0 4.420-2.700 5.390-5.270 5.680.410.360.780 1.060.780 2.140v3.170c0 .310.210.670.800.560A11.500 11.500 0 0 0 23.500 12C23.500 5.650 18.350.5 12 .5z"/></svg>GitHub</a>
+      <a class="gh" href="https://github.com/Nadercr7/tapetum"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.650.5.5 5.650.5 12a11.500 11.500 0 0 0 7.860 10.910c.580.110.790-.250.790-.560v-2c-3.200.700-3.880-1.380-3.880-1.380-.520-1.330-1.280-1.690-1.280-1.690-1.050-.720.080-.700.080-.700 1.160.080 1.770 1.190 1.770 1.190 1.030 1.770 2.700 1.260 3.360.960.100-.750.400-1.260.730-1.550-2.560-.290-5.250-1.280-5.250-5.690 0-1.260.450-2.290 1.190-3.090-.120-.290-.520-1.460.110-3.050 0 0 .970-.310 3.170 1.180a11 11 0 0 1 5.770 0c2.200-1.490 3.170-1.180 3.170-1.180.630 1.590.230 2.760.110 3.050.740.800 1.190 1.830 1.190 3.090 0 4.420-2.700 5.390-5.270 5.680.410.360.780 1.060.780 2.140v3.170c0 .310.210.670.800.560A11.500 11.500 0 0 0 23.500 12C23.500 5.650 18.350.5 12 .5z"/></svg>GitHub<span class="stars" id="stars" hidden></span></a>
     </nav>
   </div>
 </header>
@@ -304,6 +328,23 @@ footer a:hover{text-decoration:underline}
       <img src="assets/logo.svg" alt="" width="120" height="120">
       <div><h2>Why “tapetum”</h2><p>The tapetum is the mirror behind a cat's retina. It sends light back through the eye for a second look, which is why cats see in the dark and why their eyes glow in a flashlight beam. Look twice, miss less.</p></div>
     </div>
+
+    <div class="cta">
+      <div>
+        <h2>If it saved you a few tokens</h2>
+        <p>Star it on GitHub. It takes a second, and it's how other people find a small open-source tool like this one. Ideas and bug reports are welcome too.</p>
+      </div>
+      <div class="cta-actions">
+        <a class="btn btn-star" href="https://github.com/Nadercr7/tapetum"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5l2.900 6.300 6.900.700-5.200 4.600 1.500 6.800L12 17.400 5.900 20.900l1.500-6.800L2.200 9.500l6.900-.700z"/></svg>Star on GitHub<span id="stars2"></span></a>
+        <p class="share-label">or share it</p>
+        <div class="share">
+          <a id="sh-x" href="#" aria-label="Share on X" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.800 3h3.100l-6.800 7.700L22 21h-6.200l-4.900-6.300L5.300 21H2.200l7.200-8.300L2 3h6.400l4.400 5.800zm-1.100 16.200h1.700L7.400 4.700H5.600z"/></svg></a>
+          <a id="sh-li" href="#" aria-label="Share on LinkedIn" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.500 3.500a2 2 0 1 1 0 4 2 2 0 0 1 0-4zM3 9h3v12H3zm6 0h2.900v1.700h.040c.400-.760 1.400-1.900 3.400-1.900 3.100 0 3.700 2 3.700 4.700V21h-3v-5.700c0-1.400 0-3.100-1.900-3.100s-2.200 1.500-2.200 3V21H9z"/></svg></a>
+          <a id="sh-rd" href="#" aria-label="Share on Reddit" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12.100a2.200 2.200 0 0 0-3.700-1.600 10.700 10.700 0 0 0-5.800-1.800l1-4.600 3.200.700a1.600 1.600 0 1 0 .200-1l-3.600-.800a.500.500 0 0 0-.600.400l-1.100 5.200a10.700 10.700 0 0 0-5.900 1.800 2.200 2.200 0 1 0-2.400 3.600 4.300 4.300 0 0 0 0 .700c0 3.400 4 6.200 8.900 6.200s8.900-2.800 8.900-6.200a4.300 4.300 0 0 0 0-.700 2.200 2.200 0 0 0 1.300-2zM7 13.700a1.600 1.600 0 1 1 1.600 1.600A1.600 1.600 0 0 1 7 13.700zm8.900 4.200a5.800 5.800 0 0 1-3.900 1.200 5.800 5.800 0 0 1-3.900-1.200.400.400 0 0 1 .600-.600 5 5 0 0 0 3.300 1 5 5 0 0 0 3.300-1 .400.400 0 1 1 .600.600zm-.300-2.600a1.600 1.600 0 1 1 1.600-1.600 1.600 1.600 0 0 1-1.600 1.600z"/></svg></a>
+          <a id="sh-hn" href="#" aria-label="Share on Hacker News" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 3h18v18H3zm8.100 10.200V17h1.800v-3.800L16.200 7h-2l-2.200 4.300L9.800 7h-2z"/></svg></a>
+        </div>
+      </div>
+    </div>
   </div>
 </main>
 
@@ -326,6 +367,22 @@ footer a:hover{text-decoration:underline}
   };
   const nav = document.getElementById("nav");
   addEventListener("scroll", () => nav.classList.toggle("stuck", scrollY > 8), {passive: true});
+
+
+  // live star count, and share links
+  const REPO = "https://github.com/Nadercr7/tapetum", SITE = "https://nadercr7.github.io/tapetum/";
+  const TEXT = "tapetum lets an AI agent watch a video: paste a link, get one timeline of what was said and shown. Open source, no API keys.";
+  const enc = encodeURIComponent;
+  document.getElementById("sh-x").href = `https://x.com/intent/post?text=${enc(TEXT)}&url=${enc(SITE)}`;
+  document.getElementById("sh-li").href = `https://www.linkedin.com/sharing/share-offsite/?url=${enc(SITE)}`;
+  document.getElementById("sh-rd").href = `https://www.reddit.com/submit?url=${enc(REPO)}&title=${enc("tapetum: give your AI agent eyes (open source, no API keys)")}`;
+  document.getElementById("sh-hn").href = `https://news.ycombinator.com/submitlink?u=${enc(REPO)}&t=${enc("Show HN: tapetum, a tool that lets AI agents watch videos")}`;
+  fetch("https://api.github.com/repos/Nadercr7/tapetum").then(r => r.ok ? r.json() : null).then(d => {
+    if (!d || typeof d.stargazers_count !== "number" || d.stargazers_count < 10) return; // a count of 3 helps nobody
+    const n = d.stargazers_count, txt = n >= 1000 ? (n / 1000).toFixed(1).replace(/\.0$/, "") + "k" : String(n);
+    const s = document.getElementById("stars"); s.textContent = txt; s.hidden = false; s.setAttribute("aria-label", n + " stars");
+    if (n > 0) document.getElementById("stars2").textContent = " · " + txt;
+  }).catch(() => {});
 
   const CMDS = {
     uv: ['uvx tapetum "https://youtu.be/jNQXAC9IVRw"'],

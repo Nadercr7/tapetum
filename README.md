@@ -12,6 +12,8 @@
 
 **tapetum lets an AI agent watch a video.** You give it a link. It hands back one file with what was said and what was on screen, in time order, plus the handful of frames worth looking at. No cookies, no API keys, no account. Everything runs on your machine.
 
+If it saves you time or tokens, [give it a star](https://github.com/Nadercr7/tapetum). That's how other people find it.
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/Nadercr7/tapetum/main/docs/media/demo.gif" alt="tapetum running on a YouTube link and printing the timeline" width="760">
 </p>
@@ -115,5 +117,14 @@ pytest
 ```
 
 Keep the virtualenv outside OneDrive or Dropbox; sync clients lock files mid-install. Design notes, competitor research and measurements are in [docs/research](docs/research/). Releasing is in [docs/RELEASING.md](docs/RELEASING.md).
+
+## Star history
+
+<a href="https://star-history.com/#Nadercr7/tapetum&Date">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Nadercr7/tapetum&type=Date&theme=dark">
+    <img alt="Star history of tapetum" src="https://api.star-history.com/svg?repos=Nadercr7/tapetum&type=Date" width="600">
+  </picture>
+</a>
 
 MIT licensed. Use it on videos you're allowed to watch.
